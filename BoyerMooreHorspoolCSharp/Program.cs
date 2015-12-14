@@ -16,7 +16,7 @@ namespace BoyerMooreHorspoolCSharp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new StringSearch());
+            Application.Run(new StringSearch());            
         }
     }
 }
