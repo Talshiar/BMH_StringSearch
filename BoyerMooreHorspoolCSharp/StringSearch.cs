@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace BoyerMooreHorspoolCSharp
 {
@@ -47,7 +48,13 @@ namespace BoyerMooreHorspoolCSharp
         private void buttonStart_Click(object sender, EventArgs e)
         {
             inputDataCheck();
+            var watch = Stopwatch.StartNew();
             int index = search(text, textBoxPattern.Text);
+            watch.Stop();
+            writeToResultBox(index, text);
+            labelResults.Text = "Results( " + watch.ElapsedMilliseconds.ToString() + "ms ):";
+            richTextBoxResults.Visible = true;
+            
          
         }
 
@@ -100,7 +107,25 @@ namespace BoyerMooreHorspoolCSharp
                 MessageBox.Show("The provided pattern is longer than the text you are searching through. Please write a shorter pattern.");
             }
         }
+        public void writeToResultBox(int index, string text)
+        {
+            richTextBoxResults.Text = "";
+            string pattern = textBoxPattern.Text;
+            int patternLength = pattern.Length;
+            for (int i = 0; i < text.Length; ++i)
+            {
+                if (i == index)
+                {
+                    richTextBoxResults.AppendText(pattern, Color.Red);
+                    i += patternLength - 1;
+                } 
+                else
+                {
+                    richTextBoxResults.AppendText(text[i].ToString());
+                }
+            }
 
+        }
         private void buttonReset_Click(object sender, EventArgs e)
         {
             Application.Restart();
@@ -110,8 +135,16 @@ namespace BoyerMooreHorspoolCSharp
         {
             this.Close();
         }
-
-
-
+    }
+    public static class RichTextBoxExtensions
+    {
+        public static void AppendText(this RichTextBox box, string text, Color color)
+        {
+            box.SelectionStart = box.TextLength;
+            box.SelectionLength = 0;
+            box.SelectionColor = color;
+            box.AppendText(text);
+            box.SelectionColor = box.ForeColor;
+        }
     }
 }
